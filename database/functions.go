@@ -1,28 +1,12 @@
-package db
+package database
 
 import (
 	"database/sql"
-	"github.com/lgmonezi/file-ninja-go/config"
 	"github.com/lgmonezi/file-ninja-go/utils"
-	_ "modernc.org/sqlite"
 )
 
 type RowMapper[T any] func(scanner ScannerFunction) T
 type ScannerFunction func(dest ...any)
-
-var dbConn *sql.DB
-
-func init() {
-	var err error
-	dbConn, err = getConnection()
-	if err != nil {
-		panic(err)
-	}
-}
-
-func getConnection() (*sql.DB, error) {
-	return sql.Open(config.DatabaseDriver, config.DatabaseUrl)
-}
 
 func QueryDB[T any](sql string, mapper RowMapper[T]) ([]T, error) {
 	rows, err := dbConn.Query(sql)
