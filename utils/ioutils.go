@@ -10,18 +10,13 @@ import (
 	"strings"
 )
 
-var InputOutOfRangeErr = errors.New("input out of range")
+var ErrInputOutOfRange = errors.New("input out of range")
 
 func CloseWarningError(subject io.Closer) {
 	err := subject.Close()
 	if err != nil {
 		println("Warning: Couldn't close stream:", err.Error())
 	}
-}
-
-func Print2Ln(args ...any) {
-	fmt.Println(args...)
-	fmt.Println()
 }
 
 func PromptOneLine(prompt string) (string, error) {
@@ -56,7 +51,7 @@ func PromptBoolean(prompt string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	return "y" == strings.ToLower(answer), nil
+	return strings.ToLower(answer) == "y", nil
 }
 
 func MustPromptBoolean(prompt string) bool {
@@ -81,7 +76,7 @@ func ChooseFromOptions(prompt string, options []string) (int, error) {
 	}
 	input, err := PromptInteger(prompt)
 	if err == nil && input < 1 || input > len(options) {
-		err = InputOutOfRangeErr
+		err = ErrInputOutOfRange
 	}
 	if err != nil {
 		return 0, fmt.Errorf("invalid user input: %w", err)
